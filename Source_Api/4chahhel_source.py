@@ -2,9 +2,8 @@ import time, functools, logging
 import pyvisa
 import asyncio
 import aiomisc
-import advancedhttpserver
-from advancedhttpserver import RequestHandler
 import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 resource_manager = pyvisa.ResourceManager()
 src = resource_manager.open_resource("TCPIP0::169.254.129.17::INSTR") #connecting to source
@@ -19,7 +18,7 @@ class HTTPError(Exception):
 class Source:
     
     
-    def __init__(self, work):
+    def __init__(self):
         self.work = {1:0, 2:0, 3:0, 4:0} # working channels
      
     def switching_on(self, channel, current, voltage):
@@ -97,7 +96,7 @@ class Logger(Source):
             self.logging_function(4)
         )
 
-class Handler(RequestHandler, Source):
+class Handler(BaseHTTPRequestHandler, Source):
     
     def do_GET(self):
         if self.path == '/current_state/':
@@ -143,7 +142,7 @@ class Handler(RequestHandler, Source):
 if __name__ == '__main__':
     log = Logger()
     server_address = ('127.0.0.1', 8080)
-    server = advancedhttpserver.HTTPServer(server_address, Handler)
+    server = HTTPServer(server_address, Handler)
     server.serve_forever()
     with aiomisc.entrypoint(log_config=log.CONFIG) as loop:
             while True:
