@@ -4,9 +4,12 @@ import asyncio
 import aiomisc
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from config import load_config
+
+config = load_config('source.ini')
 
 resource_manager = pyvisa.ResourceManager()
-src = resource_manager.open_resource("TCPIP0::169.254.129.17::INSTR") #connecting to source
+src = resource_manager.open_resource(config.path.source_adress) #connecting to source
 
 
 class HTTPError(Exception):
@@ -144,7 +147,7 @@ class Handler(BaseHTTPRequestHandler, Source):
 
 if __name__ == '__main__':
     log = Logger()
-    server_address = ('127.0.0.1', 8080)
+    server_address = (config.path.host, config.path.port)
     server = HTTPServer(server_address, Handler)
     server.serve_forever()
     with aiomisc.entrypoint(log_config=log.CONFIG) as loop:
