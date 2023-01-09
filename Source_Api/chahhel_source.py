@@ -10,6 +10,8 @@ src = resource_manager.open_resource("TCPIP0::169.254.129.17::INSTR") #connectin
 
 
 class HTTPError(Exception):
+    
+    
     def __init__(self, code, reason):
         super(HTTPError, self).__init__(reason)
         self.code = code
@@ -24,8 +26,8 @@ class Source:
         self.turn_on(channel)
 
     def turn_off(self, channel):
-            src.write(f':OUTPut{channel}:STATe OFF')
-            return f':OUTPut{channel}:STATe OFF'
+        src.write(f':OUTPut{channel}:STATe OFF')
+        return f':OUTPut{channel}:STATe OFF'
     
     #calling current state on all channels
     def current_state(self):
