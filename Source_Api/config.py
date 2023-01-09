@@ -16,11 +16,11 @@ class Config:
 def load_config(path: str):
     config = configparser.ConfigParser()
     config.read(path)
-    api_src = config["api_src"]
+    api_src = config["path"]
 
 
     return Config(
-        api_ssrc = Source_config(
+        api_src = Source_config(
             host = api_src.get("host"),
             port = api_src.getint("port"),
             source_adress = api_src.get("source_adress")

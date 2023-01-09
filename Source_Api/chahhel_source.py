@@ -9,7 +9,7 @@ from config import load_config
 config = load_config('source.ini')
 
 resource_manager = pyvisa.ResourceManager()
-src = resource_manager.open_resource(config.path.source_adress) #connecting to source
+src = resource_manager.open_resource(config.api_src.source_adress) #connecting to source
 
 
 class HTTPError(Exception):
@@ -147,7 +147,7 @@ class Handler(BaseHTTPRequestHandler, Source):
 
 if __name__ == '__main__':
     log = Logger()
-    server_address = (config.path.host, config.path.port)
+    server_address = (config.api_src.host, config.api_src.port)
     server = HTTPServer(server_address, Handler)
     server.serve_forever()
     with aiomisc.entrypoint(log_config=log.CONFIG) as loop:
