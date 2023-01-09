@@ -103,7 +103,7 @@ class Handler(BaseHTTPRequestHandler, Source):
             data =  self.current_state()
             return json.dumps(data, sort_keys=True)
     
-    def do_POSY(self):
+    def do_POST(self):
         if self.path == '/switching_on/':      
             return self.process_request(201, functools.partial(self.call_with_body, self.switching_on))
         elif self.path == '/turn_off/':
