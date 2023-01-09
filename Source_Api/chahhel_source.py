@@ -48,12 +48,15 @@ class Source:
             
     def set_current(self,channel, current):
         src.write(f':SOURce{channel}:CURRent {current}')
+        return f':SOURce{channel}:CURRent {current}'
         
     def set_voltage(self,channel, voltage):
         src.write(f':SOURce{channel}:VOLTage {voltage}')
+        return f':SOURce{channel}:VOLTage {voltage}'
            
     def turn_on(self, channel):
         src.write(f':OUTPut{channel}:STATe ON')
+        return f':OUTPut{channel}:STATe ON'
         
     def measure(self, channel):
         src.write(f':MEASure{channel}:ALL?')
