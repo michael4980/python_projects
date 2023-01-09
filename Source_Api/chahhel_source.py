@@ -127,8 +127,20 @@ class Handler(BaseHTTPRequestHandler, Source):
         except Exception as e:
             data = {'error': str(e)}
             status = 500
-
         self.write_response(status, data)
+        
+    def write_response(self, status, data):
+        """Formats response as json and writes"""
+        if data is not None:
+            body = json.dumps(data, sort_keys=True, indent=4, cls=json.JSONEncoder).encode('utf-8')
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json; charset=utf=8')
+            self.send_header('Content-Length',  len(body))
+            self.end_headers()
+            self.wfile.write(body)
+            self.wfile.flush()
+        else:
+            self.send_response(204)
 
 if __name__ == '__main__':
     log = Logger()
