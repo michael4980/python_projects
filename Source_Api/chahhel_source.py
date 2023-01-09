@@ -17,33 +17,19 @@ class HTTPError(Exception):
 
 class Source:
     
-    
-    def __init__(self):
-        self.work = {1:0, 2:0, 3:0, 4:0} # working channels
      
     def switching_on(self, channel, current, voltage):
-        if self.work[channel] == 0:
-           self.set_current(channel, current)
-           self.set_voltage(channel, voltage)
-           self.turn_on(channel)
-           self.work[channel] = 1
-        else:
-            print(f'{channel} already works')
+        self.set_current(channel, current)
+        self.set_voltage(channel, voltage)
+        self.turn_on(channel)
 
     def turn_off(self, channel):
-        if self.work[channel] == 1:
             src.write(f':OUTPut{channel}:STATe OFF')
-            self.work[channel] = 0
-        else:
-            print(f'channel {channel} is not working')
+            return f':OUTPut{channel}:STATe OFF'
     
     #calling current state on all channels
     def current_state(self):
-        book = []
-        for channel in range(1, 5):
-            if self.work[channel] == 1:
-                result = self.measure(channel)
-                book.append(result)
+        book = [self.measure(channel) for channel in range(1, 5)]
         return book
             
     def set_current(self,channel, current):
