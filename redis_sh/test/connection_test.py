@@ -1,9 +1,11 @@
 import sys
-
-sys.path.insert(1, r'C:\Users\USER\Desktop\python_projects\my_projects\redis_sh')
+from pathlib import Path
+sys.path.insert(1, Path.home())
 
 import post, main
+from config import load_config
 
+config = load_config(r'redis_sh\source.ini')
 conn = post.Db_connnect()
 start = main.Dumper()
 
@@ -28,7 +30,7 @@ def test_redis_connection():
     assert resp == 200, 'redis db didn`t connect'
     
 def test_image_load():
-    resp = start.picture_load(r'C:\Users\USER\Desktop\НОЦ\LER\RESULT\*')
+    resp = start.picture_load(config.path.path)
     assert resp == 200, 'redis queue didn`t fill'
     
 
