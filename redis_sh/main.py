@@ -10,8 +10,6 @@ config = load_config(r'redis_sh\source.ini')
 class Loader():
     
     
-    _config  = 0
-
     def picture_load(self, path):
         client, resp = self.redis_connection()
         for name in glob.glob(path):
@@ -26,7 +24,7 @@ class Loader():
 
 class Dumper(Loader):
     
-    
+    #initialize writer to postgres db in asyncio threads
     @aiomisc.threaded
     def dump_function(self):
         client, resp = self.redis_connection()
