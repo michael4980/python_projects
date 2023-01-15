@@ -42,7 +42,7 @@ class Dumper(Loader):
 if __name__ == '__main__':
     start = Dumper()
     start.picture_load(config.path.path)
-    client = start.redis_connection()
+    client = start.redis_connection()[0]
     with aiomisc.entrypoint() as loop:
         while client.llen('image_list') >= 1:
             try:
