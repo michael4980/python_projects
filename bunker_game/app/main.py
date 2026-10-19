@@ -143,7 +143,9 @@ async def ws_room(ws: WebSocket, code: str, token: str = "") -> None:
     room = manager.rooms.get(code.upper())
     player = room.player_by_token(token) if room else None
     if room is None or player is None:
-        await ws.close(code=4404)
+        # Сначала принимаем соединение, иначе браузер не увидит код закрытия.
+        await ws.accept()
+        await ws.close(code=4404, reason="room not found")
         return
     await ws.accept()
     manager.sockets[room.code].setdefault(player.id, set()).add(ws)

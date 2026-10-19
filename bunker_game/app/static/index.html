@@ -271,7 +271,13 @@
     <button class="primary big" @click="leave">К началу</button>
   </main>
 
-  <main v-else class="home"><p class="muted">Подключение…</p></main>
+  <main v-else class="home connecting">
+    <div class="card center">
+      <p class="muted">Подключение к комнате {{ session.code }}…</p>
+      <p class="muted small" v-if="connectFailed">Сервер не отвечает. Если он только что проснулся, подождите минуту. Если комната уже закрыта, начните заново.</p>
+      <button class="ghost" @click="resetSession('')">Начать заново</button>
+    </div>
+  </main>
 </div>
 <script src="/static/vendor/vue.global.prod.js"></script>
 <script src="/static/app.js"></script>

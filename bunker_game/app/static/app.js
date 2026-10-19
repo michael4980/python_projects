@@ -29,6 +29,7 @@ createApp({
       settings: { seats: 1, reveals_per_round: 1, specials: true },
       specialTarget: "",
       stopped: false,
+      connectFailed: false,
     };
   },
   computed: {
@@ -97,7 +98,7 @@ createApp({
       const proto = location.protocol === "https:" ? "wss" : "ws";
       const ws = new WebSocket(`${proto}://${location.host}/ws/${this.session.code}?token=${encodeURIComponent(this.session.token)}`);
       this.ws = ws;
-      ws.onopen = () => { this.connected = true; this.retry = 0; };
+      ws.onopen = () => { this.connected = true; this.retry = 0; this.connectFailed = false; };
       ws.onmessage = (ev) => {
         const msg = JSON.parse(ev.data);
         if (msg.type === "state") {
@@ -114,7 +115,9 @@ createApp({
         this.connected = false;
         if (ev.code === 4404) { this.resetSession("Комната не найдена или уже закрыта"); return; }
         if (this.stopped) return;
-        const delay = Math.min(10000, 500 * Math.pow(2, this.retry++));
+        this.retry++;
+        if (!this.state && this.retry >= 4) this.connectFailed = true;
+        const delay = Math.min(10000, 500 * Math.pow(2, this.retry));
         setTimeout(() => this.connect(), delay);
       };
       ws.onerror = () => {};
@@ -159,7 +162,7 @@ createApp({
     resetSession(msg) {
       this.stopped = true;
       if (this.ws) { try { this.ws.close(); } catch (e) {} }
-      this.ws = null; this.session = null; this.state = null; this.me = null; this.connected = false;
+      this.ws = null; this.session = null; this.state = null; this.me = null; this.connected = false; this.connectFailed = false;
       saveSession(null);
       if (msg) this.homeError = msg;
     },
