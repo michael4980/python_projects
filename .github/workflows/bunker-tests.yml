@@ -1,0 +1,19 @@
+name: bunker tests
+on:
+  push:
+    paths: ["bunker_game/**", ".github/workflows/bunker-tests.yml"]
+  pull_request:
+    paths: ["bunker_game/**"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bunker_game
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q

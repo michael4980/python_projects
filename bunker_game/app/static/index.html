@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Бункер</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="app" v-cloak>
+  <header class="top">
+    <div class="brand" @click="goHome">☢ БУНКЕР</div>
+    <div class="top-right" v-if="state">
+      <span class="pill">Комната <b>{{ state.code }}</b></span>
+      <span class="pill" :class="{off: !connected}">{{ connected ? 'онлайн' : 'переподключение…' }}</span>
+    </div>
+  </header>
+
+  <div class="toast" v-if="toast" @click="toast=''">{{ toast }}</div>
+
+  <!-- ===== Главная ===== -->
+  <main v-if="screen==='home'" class="home">
+    <h1>Кто останется в бункере?</h1>
+    <p class="muted">Дискуссионная игра на выживание. Концовка зависит от того, кого вы оставили внутри и кого выгнали.</p>
+    <div class="card form">
+      <label>Ваше имя
+        <input v-model.trim="form.name" maxlength="24" placeholder="Как вас называть" @keyup.enter="submitHome">
+      </label>
+      <div class="tabs">
+        <button :class="{active: form.mode==='join'}" @click="form.mode='join'">Войти по коду</button>
+        <button :class="{active: form.mode==='create'}" @click="form.mode='create'">Создать комнату</button>
+      </div>
+      <label v-if="form.mode==='join'">Код комнаты
+        <input v-model.trim="form.code" maxlength="5" placeholder="Например, K7XQ2" class="code-input" @keyup.enter="submitHome">
+      </label>
+      <label v-if="form.mode==='create' && cfg.master_required">Мастер-код
+        <input v-model.trim="form.master" type="password" placeholder="Выдаёт владелец сайта" @keyup.enter="submitHome">
+      </label>
+      <button class="primary big" :disabled="busy" @click="submitHome">
+        {{ form.mode==='join' ? 'Войти' : 'Создать комнату' }}
+      </button>
+      <p class="error" v-if="homeError">{{ homeError }}</p>
+    </div>
+    <details class="rules card">
+      <summary>Как играть</summary>
+      <ol>
+        <li>Ведущий создаёт комнату и отдаёт код остальным.</li>
+        <li>Каждый получает тайные карты: профессию, биологию, здоровье, хобби, багаж, факт, фобию и одно особое условие.</li>
+        <li>Раунд: все открывают по одной карте и объясняют, чем полезны. Потом обсуждение и тайное голосование.</li>
+        <li>Набравший больше всех голосов остаётся снаружи. Ничья: оправдательная речь и переголосование, потом жребий.</li>
+        <li>Когда людей становится столько, сколько мест, дверь закрывается. Движок считает, выжила ли группа, и показывает, кто из изгнанных мог бы всё изменить.</li>
+      </ol>
+    </details>
+  </main>
+
+  <!-- ===== Лобби ===== -->
+  <main v-else-if="screen==='lobby'" class="lobby">
+    <div class="card center">
+      <div class="muted">Код комнаты</div>
+      <div class="big-code">{{ state.code }}</div>
+      <button class="ghost" @click="copyLink">Скопировать ссылку для друзей</button>
+    </div>
+    <div class="card">
+      <h3>Игроки ({{ state.players.length }})</h3>
+      <ul class="players-list">
+        <li v-for="p in state.players" :key="p.id">
+          <span class="dot" :class="{on: p.connected}"></span>
+          <span>{{ p.name }}</span>
+          <span class="tag" v-if="p.is_host">ведущий</span>
+          <button class="tiny danger" v-if="me.is_host && !p.is_host" @click="send({type:'kick', player_id:p.id})">убрать</button>
+        </li>
+      </ul>
+    </div>
+    <div class="card" v-if="me.is_host">
+      <h3>Настройки</h3>
+      <label class="row">Мест в бункере
+        <input type="number" min="1" :max="Math.max(1, state.players.length-1)" v-model.number="settings.seats" @change="applySettings">
+      </label>
+      <label class="row">Карт открывать за раунд
+        <input type="number" min="1" max="3" v-model.number="settings.reveals_per_round" @change="applySettings">
+      </label>
+      <label class="row"><span>Особые условия</span>
+        <input type="checkbox" v-model="settings.specials" @change="applySettings">
+      </label>
+      <button class="primary big" :disabled="state.players.length < state.min_players" @click="send({type:'start'})">
+        Начать игру
+      </button>
+      <p class="muted" v-if="state.players.length < state.min_players">Нужно хотя бы {{ state.min_players }} игрока.</p>
+    </div>
+    <div class="card" v-else>
+      <p class="muted">Мест в бункере: {{ state.seats }}. Ждём, пока ведущий начнёт игру.</p>
+    </div>
+    <button class="ghost" @click="leave">Выйти из комнаты</button>
+  </main>
+
+  <!-- ===== Игра ===== -->
+  <main v-else-if="screen==='game'" class="game">
+    <section class="scenario">
+      <div class="card catastrophe">
+        <div class="muted">Катастрофа</div>
+        <h2>{{ state.catastrophe.title }}</h2>
+        <p>{{ state.catastrophe.text }}</p>
+        <ul class="details"><li v-for="d in state.catastrophe.details">{{ d }}</li></ul>
+      </div>
+      <div class="card bunker">
+        <div class="muted">Бункер</div>
+        <h2>{{ state.bunker.name }}</h2>
+        <p>{{ state.bunker.size_m2 }} м² · сидеть {{ months(state.bunker.stay_months) }} · еды на {{ months(state.bunker.food_months) }}</p>
+        <ul class="details"><li v-for="f in state.bunker.features">{{ f.text }}</li></ul>
+        <div class="seats">Мест: <b>{{ state.seats }}</b> · в игре: <b>{{ state.alive_count }}</b> · раунд {{ state.round }}</div>
+      </div>
+    </section>
+
+    <section class="card phase" :class="state.phase">
+      <template v-if="state.phase==='reveal'">
+        <b>Раунд {{ state.round }}: раскрытие и обсуждение.</b>
+        <span v-if="me.status==='alive'"> Вам осталось открыть карт: {{ me.reveals_left }}.</span>
+        <span v-else> Вы снаружи и наблюдаете.</span>
+      </template>
+      <template v-else-if="state.phase==='vote'">
+        <b>Голосование{{ state.vote.tiebreak ? ' (переголосование после ничьей)' : '' }}.</b>
+        Проголосовали {{ state.vote.voted.length }} из {{ state.vote.needed }}.
+      </template>
+      <div class="host-controls" v-if="me.is_host">
+        <button class="primary" v-if="state.phase==='reveal'" @click="send({type:'start_vote'})">Начать голосование</button>
+        <button v-if="state.phase==='vote'" @click="send({type:'cancel_vote'})">Отменить голосование</button>
+        <button class="danger" @click="confirmFinish">Закрыть дверь досрочно</button>
+      </div>
+    </section>
+
+    <section class="card vote" v-if="state.phase==='vote' && me.status==='alive'">
+      <h3>Кого оставить снаружи?</h3>
+      <div class="vote-grid">
+        <button v-for="p in candidates" :key="p.id" class="vote-btn"
+                :class="{chosen: me.my_vote===p.id}" :disabled="p.id===me.id || !!me.my_vote"
+                @click="send({type:'vote', target_id:p.id})">
+          {{ p.name }}<small v-if="p.id===me.id">это вы</small>
+        </button>
+      </div>
+      <p class="muted" v-if="me.my_vote">Ваш голос учтён. Ждём остальных.</p>
+    </section>
+
+    <section class="card last-vote" v-if="state.last_vote && state.phase==='reveal' && state.round>1">
+      <details><summary>Итоги прошлого голосования</summary>
+        <ul><li v-for="(v,pid) in state.last_vote.tally">{{ nameOf(pid) }}: {{ v }}</li></ul>
+      </details>
+    </section>
+
+    <section class="card mine" v-if="me.cards">
+      <h3>Мои карты <span class="muted" v-if="me.status==='out'">(вы снаружи)</span></h3>
+      <div class="cards-grid">
+        <div v-for="c in state.categories" :key="c.key" class="pcard" :class="{revealed: me.cards[c.key].revealed}">
+          <div class="cat">{{ c.title }}</div>
+          <div class="txt">{{ me.cards[c.key].text }}</div>
+          <button class="tiny" v-if="canReveal(c.key)" @click="send({type:'reveal', category:c.key})">Открыть</button>
+          <span class="tag open" v-else-if="me.cards[c.key].revealed">открыта</span>
+        </div>
+        <div class="pcard special" v-if="me.special" :class="{used: me.special.used}">
+          <div class="cat">Особое условие</div>
+          <div class="txt"><b>{{ me.special.title }}</b><br>{{ me.special.text }}</div>
+          <template v-if="!me.special.used && me.status==='alive'">
+            <select v-if="needsTarget" v-model="specialTarget">
+              <option disabled value="">Выберите игрока</option>
+              <option v-for="p in otherAlive" :value="p.id">{{ p.name }}</option>
+            </select>
+            <button class="tiny" :disabled="state.phase!=='reveal' || (needsTarget && !specialTarget)" @click="playSpecial">Сыграть</button>
+          </template>
+          <span class="tag" v-else-if="me.special.used">сыграна</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card table">
+      <h3>Стол</h3>
+      <div class="player" v-for="p in state.players" :key="p.id" :class="{out: p.status==='out', me: p.id===me.id}">
+        <div class="phead">
+          <span class="dot" :class="{on: p.connected}"></span>
+          <b>{{ p.name }}</b>
+          <span class="tag" v-if="p.is_host">ведущий</span>
+          <span class="tag out" v-if="p.status==='out'">снаружи (раунд {{ p.exiled_round }})</span>
+          <span class="tag" v-if="p.immunity">иммунитет</span>
+          <span class="tag" v-if="p.double_vote">голос ×2</span>
+          <span class="tag" v-if="state.phase==='vote' && p.voted">проголосовал</span>
+          <span class="muted small" v-if="p.hidden_count">скрыто: {{ p.hidden_count }}</span>
+        </div>
+        <div class="revealed">
+          <template v-for="c in state.categories" :key="c.key">
+            <span class="chip" v-if="p.revealed[c.key]"><i>{{ c.title }}:</i> {{ p.revealed[c.key] }}</span>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <section class="card log">
+      <details open><summary>Журнал</summary>
+        <ul><li v-for="(e,i) in state.log.slice().reverse()" :key="i" :class="e.kind">{{ e.text }}</li></ul>
+      </details>
+    </section>
+  </main>
+
+  <!-- ===== Финал ===== -->
+  <main v-else-if="screen==='finished'" class="finished">
+    <div class="card verdict" :class="verdictClass">
+      <div class="muted">{{ state.catastrophe.title }} · {{ state.bunker.name }}</div>
+      <h1>{{ state.ending.verdict.title }}</h1>
+      <p>{{ state.ending.verdict.text }}</p>
+      <div class="bar"><div class="fill" :style="{width: state.ending.verdict.percent+'%'}"></div></div>
+      <div class="muted">Шансы группы: {{ state.ending.verdict.percent }}%</div>
+    </div>
+
+    <div class="card narrative">
+      <h3>Хроника выживания</h3>
+      <p v-if="state.narrative_status==='pending'" class="muted">Рассказчик пишет хронику…</p>
+      <p v-else-if="state.narrative_status==='disabled'" class="muted">Рассказчик выключен (нет ключа OpenAI). Ниже — расчёт движка.</p>
+      <p v-else-if="state.narrative_status==='failed'" class="muted">Рассказчик не ответил. Ниже — расчёт движка.</p>
+      <div v-else class="story"><p v-for="par in paragraphs(state.narrative)">{{ par }}</p></div>
+    </div>
+
+    <div class="card needs">
+      <h3>Потребности бункера</h3>
+      <div class="need" v-for="n in state.ending.needs" :key="n.key" :class="n.status">
+        <div class="nhead"><b>{{ n.title }}</b> <span>{{ n.supply }} / {{ n.demand }}</span> <span class="tag">{{ statusText(n.status) }}</span></div>
+        <div class="bar"><div class="fill" :style="{width: Math.min(100, n.ratio*100)+'%'}"></div></div>
+        <div class="muted small" v-if="n.note">{{ n.note }}</div>
+        <details v-if="n.contributors.length || n.bunker_supply"><summary class="small">Кто что дал</summary>
+          <ul class="small">
+            <li v-if="n.bunker_supply">Бункер: {{ n.bunker_supply > 0 ? '+' : '' }}{{ n.bunker_supply }}</li>
+            <li v-for="c in n.contributors">{{ c.name }} ({{ c.total>0?'+':'' }}{{ c.total }}): <span v-for="(k,i) in c.cards">{{ i?', ':'' }}{{ k.text }} ({{ k.value>0?'+':'' }}{{ k.value }})</span></li>
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <div class="card timeline">
+      <h3>Что происходило</h3>
+      <ul><li v-for="e in state.ending.timeline" :class="e.kind"><b>Месяц {{ e.month }}.</b> {{ e.text }}</li></ul>
+    </div>
+
+    <div class="two">
+      <div class="card fates">
+        <h3>В бункере</h3>
+        <ul><li v-for="f in state.ending.fates" :class="f.status"><b>{{ f.name }}</b> — {{ f.text }}</li></ul>
+      </div>
+      <div class="card outside">
+        <h3>Снаружи</h3>
+        <ul><li v-for="o in state.ending.outside" :class="o.survived?'alive':'dead'"><b>{{ o.name }}</b> — {{ o.text }}</li></ul>
+        <p class="muted" v-if="!state.ending.outside.length">Никого не выгнали.</p>
+      </div>
+    </div>
+
+    <div class="card whatif" v-if="state.ending.whatif.length">
+      <h3>А что, если бы…</h3>
+      <div v-for="w in state.ending.whatif" :key="w.key" class="wi">
+        <b>{{ w.title }}</b> <span class="tag" :class="w.status">{{ statusText(w.status) }}</span>
+        <p v-if="w.helpers.length">Могли бы помочь из изгнанных:
+          <span v-for="(h,i) in w.helpers">{{ i?'; ':'' }}<b>{{ h.name }}</b> (<span v-for="(k,j) in h.cards">{{ j?', ':'' }}{{ k.text }} +{{ k.value }}</span>)</span>
+        </p>
+        <p class="muted" v-else>Среди изгнанных никто бы не помог.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <details><summary>Все карты игроков</summary>
+        <div class="player" v-for="p in state.players" :key="p.id" :class="{out: p.status==='out'}">
+          <div class="phead"><b>{{ p.name }}</b> <span class="tag out" v-if="p.status==='out'">снаружи</span></div>
+          <div class="revealed"><template v-for="c in state.categories" :key="c.key"><span class="chip" v-if="p.revealed[c.key]"><i>{{ c.title }}:</i> {{ p.revealed[c.key] }}</span></template></div>
+        </div>
+      </details>
+    </div>
+    <button class="primary big" @click="leave">К началу</button>
+  </main>
+
+  <main v-else class="home"><p class="muted">Подключение…</p></main>
+</div>
+<script src="/static/vendor/vue.global.prod.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

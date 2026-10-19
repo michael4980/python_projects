@@ -1,0 +1,422 @@
+# Карты персонажа. tags — вклад в потребности группы (может быть отрицательным).
+# risk — личный риск погибнуть в бункере (0..4), risk_text — причина. mitigated_by — какая потребность снижает риск.
+# outside — бонус к выживанию снаружи (0..3).
+professions:
+  - {text: "Хирург", tags: {medicine: 3}}
+  - {text: "Терапевт", tags: {medicine: 3}}
+  - {text: "Фельдшер скорой помощи", tags: {medicine: 2}, outside: 1}
+  - {text: "Медсестра / медбрат", tags: {medicine: 2}}
+  - {text: "Акушерка / акушер", tags: {medicine: 1, reproduction: 2}}
+  - {text: "Стоматолог", tags: {medicine: 1}}
+  - {text: "Психиатр", tags: {medicine: 1, morale: 2}}
+  - {text: "Психолог", tags: {morale: 3}}
+  - {text: "Фармацевт", tags: {medicine: 2, infection: 1}}
+  - {text: "Ветеринар", tags: {medicine: 1, food: 1}}
+  - {text: "Эпидемиолог", tags: {medicine: 2, infection: 3}}
+  - {text: "Вирусолог", tags: {medicine: 1, infection: 3}}
+  - {text: "Фермер", tags: {food: 3}, outside: 1}
+  - {text: "Агроном", tags: {food: 3}}
+  - {text: "Пчеловод", tags: {food: 1}}
+  - {text: "Рыбак", tags: {food: 2, water: 1}, outside: 1}
+  - {text: "Охотник-промысловик", tags: {food: 2, security: 1}, outside: 2}
+  - {text: "Мясник", tags: {food: 1, security: 1}}
+  - {text: "Шеф-повар", tags: {food: 2, morale: 1}}
+  - {text: "Пекарь", tags: {food: 1, morale: 1}}
+  - {text: "Повар в фастфуде", tags: {food: 1}}
+  - {text: "Ресторанный критик", tags: {morale: -1}}
+  - {text: "Электрик", tags: {tech: 3, heat: 1}}
+  - {text: "Сантехник", tags: {tech: 2, water: 2}}
+  - {text: "Сварщик", tags: {tech: 2}}
+  - {text: "Плотник", tags: {tech: 2}}
+  - {text: "Автомеханик", tags: {tech: 2}, outside: 1}
+  - {text: "Инженер по вентиляции", tags: {tech: 2, air: 3}}
+  - {text: "Слесарь канализационных сетей", tags: {tech: 1, water: 2}}
+  - {text: "Специалист по борьбе с вредителями", tags: {food: 1, infection: 1}}
+  - {text: "Инженер-строитель", tags: {tech: 3}}
+  - {text: "Физик-ядерщик", tags: {tech: 2, radiation: 3}}
+  - {text: "Химик", tags: {tech: 1, medicine: 1, water: 1, air: 1}}
+  - {text: "Микробиолог", tags: {medicine: 1, infection: 2, food: 1}}
+  - {text: "Ботаник", tags: {food: 2}}
+  - {text: "Геолог", tags: {water: 1, tech: 1}, outside: 1}
+  - {text: "Метеоролог", tags: {morale: 1}, outside: 1}
+  - {text: "Программист", tags: {tech: 1, hacking: 3}}
+  - {text: "Инженер-робототехник", tags: {tech: 2, hacking: 2}}
+  - {text: "Радиоинженер", tags: {tech: 2, morale: 1}}
+  - {text: "Сетевой администратор", tags: {hacking: 2, tech: 1}}
+  - {text: "Оператор АЭС", tags: {tech: 2, radiation: 2}}
+  - {text: "Оператор очистных сооружений", tags: {water: 3, tech: 1}}
+  - {text: "Генетик", tags: {medicine: 1, reproduction: 2}}
+  - {text: "Пехотинец", tags: {security: 3}, outside: 2}
+  - {text: "Армейский сапёр", tags: {security: 2, tech: 1}, outside: 1}
+  - {text: "Пожарный", tags: {security: 2, medicine: 1}, outside: 1}
+  - {text: "Полицейский", tags: {security: 2}, outside: 1}
+  - {text: "Охранник", tags: {security: 1}}
+  - {text: "Телохранитель", tags: {security: 2}}
+  - {text: "Боец спецназа", tags: {security: 4}, outside: 3}
+  - {text: "Спасатель МЧС", tags: {security: 1, medicine: 1}, outside: 2}
+  - {text: "Учитель начальных классов", tags: {morale: 2, reproduction: 1}}
+  - {text: "Воспитатель детского сада", tags: {morale: 1, reproduction: 1}}
+  - {text: "Священник", tags: {morale: 2}}
+  - {text: "Актёр / актриса", tags: {morale: 2}}
+  - {text: "Стендап-комик", tags: {morale: 2}}
+  - {text: "Музыкант", tags: {morale: 2}}
+  - {text: "Писатель", tags: {morale: 1}}
+  - {text: "Журналист", tags: {morale: 0}}
+  - {text: "Юрист", tags: {morale: -1}}
+  - {text: "Банкир", tags: {}}
+  - {text: "Маркетолог", tags: {}}
+  - {text: "Коуч по личностному росту", tags: {morale: -1}}
+  - {text: "Блогер", tags: {morale: -1}}
+  - {text: "Модель", tags: {}}
+  - {text: "Экстрасенс", tags: {morale: 1}}
+  - {text: "Таксист", tags: {}, outside: 1}
+  - {text: "Дальнобойщик", tags: {tech: 1}, outside: 1}
+  - {text: "Безработный (3 года без работы)", tags: {}}
+  - {text: "Домохозяйка / домохозяин (на руках трое детей)", tags: {food: 1, morale: 1, reproduction: 1}}
+  - {text: "Пилот малой авиации", tags: {tech: 1}, outside: 1}
+  - {text: "Моряк дальнего плавания", tags: {tech: 1, security: 1}, outside: 1}
+  - {text: "Хакер", tags: {hacking: 3}}
+  - {text: "Тату-мастер", tags: {morale: 1}}
+  - {text: "Парикмахер", tags: {morale: 1}}
+  - {text: "Лесник", tags: {food: 2, security: 1}, outside: 2}
+  - {text: "Археолог", tags: {}, outside: 1}
+  - {text: "Философ", tags: {morale: 1}}
+  - {text: "Судья", tags: {}}
+  - {text: "Шахтёр", tags: {tech: 2, air: 1}}
+  - {text: "Школьный физрук", tags: {morale: 1, security: 1}}
+  - {text: "Бариста", tags: {morale: 1}}
+  - {text: "Курьер", tags: {}, outside: 1}
+
+health:
+  - {text: "Идеальное здоровье", tags: {}, risk: 0}
+  - {text: "Идеальное здоровье (спортивное телосложение)", tags: {security: 1}, risk: 0}
+  - {text: "Идеальное здоровье (железный иммунитет)", tags: {infection: 1}, risk: 0}
+  - {text: "Идеальное здоровье (первая отрицательная группа крови — универсальный донор)", tags: {medicine: 1}, risk: 0}
+  - {text: "Идеальное здоровье (тест на фертильность: отлично)", tags: {reproduction: 1}, risk: 0}
+  - {text: "Идеальное здоровье (каждый год бегает марафон)", tags: {}, risk: 0, outside: 1}
+  - {text: "Идеальное здоровье (и не даёт никому об этом забыть)", tags: {morale: -1}, risk: 0}
+  - {text: "Астма (средней тяжести)", tags: {}, risk: 2, risk_text: "приступ астмы без ингалятора", mitigated_by: medicine}
+  - {text: "Диабет 1 типа (инсулин каждый день)", tags: {}, risk: 3, risk_text: "кончился инсулин", mitigated_by: medicine}
+  - {text: "Диабет 2 типа (лёгкая форма)", tags: {}, risk: 1, risk_text: "осложнения диабета", mitigated_by: medicine}
+  - {text: "Бесплодие (не лечится)", tags: {reproduction: -2}, risk: 0}
+  - {text: "Гемофилия (тяжёлая форма)", tags: {}, risk: 3, risk_text: "не остановили кровотечение после пустяковой травмы", mitigated_by: medicine}
+  - {text: "Эпилепсия (приступы примерно раз в месяц)", tags: {}, risk: 2, risk_text: "приступ эпилепсии", mitigated_by: medicine}
+  - {text: "Хроническая мигрень", tags: {morale: -1}, risk: 0}
+  - {text: "Близорукость (−7, запасных очков нет)", tags: {}, risk: 1, risk_text: "разбил единственные очки", mitigated_by: tech}
+  - {text: "Дальтонизм", tags: {}, risk: 0}
+  - {text: "Глухота на одно ухо", tags: {}, risk: 0}
+  - {text: "Слепота на один глаз", tags: {}, risk: 0}
+  - {text: "Нет правой кисти (носит протез)", tags: {tech: -1}, risk: 0}
+  - {text: "Параплегия (передвигается в инвалидной коляске)", tags: {}, risk: 1, risk_text: "пролежни и инфекция", mitigated_by: medicine}
+  - {text: "Ожирение (3 степень)", tags: {food: -1}, risk: 1, risk_text: "сердце не выдержало", mitigated_by: medicine}
+  - {text: "Анорексия", tags: {}, risk: 2, risk_text: "истощение", mitigated_by: morale}
+  - {text: "Аллергия на плесень (тяжёлая)", tags: {}, risk: 2, risk_text: "анафилактический шок", mitigated_by: medicine}
+  - {text: "Аллергия на арахис", tags: {}, risk: 0}
+  - {text: "Непереносимость лактозы", tags: {}, risk: 0}
+  - {text: "Гипертония (средней тяжести)", tags: {}, risk: 1, risk_text: "инсульт", mitigated_by: medicine}
+  - {text: "Аритмия сердца", tags: {}, risk: 2, risk_text: "остановка сердца", mitigated_by: medicine}
+  - {text: "Инфаркт 2 года назад", tags: {}, risk: 2, risk_text: "повторный инфаркт", mitigated_by: medicine}
+  - {text: "Рак (стадия 2)", tags: {}, risk: 3, risk_text: "болезнь прогрессировала без терапии", mitigated_by: medicine}
+  - {text: "Рак в ремиссии (уже 5 лет)", tags: {}, risk: 1, risk_text: "рецидив", mitigated_by: medicine}
+  - {text: "Болезнь Альцгеймера, ранняя стадия", tags: {morale: -1}, risk: 1, risk_text: "перестал узнавать остальных", mitigated_by: medicine}
+  - {text: "Шизофрения (на препаратах — стойкая ремиссия)", tags: {}, risk: 2, risk_text: "кончились препараты, начались приступы", mitigated_by: medicine}
+  - {text: "Биполярное расстройство", tags: {morale: -1}, risk: 1, risk_text: "срыв", mitigated_by: morale}
+  - {text: "Клиническая депрессия", tags: {morale: -1}, risk: 2, risk_text: "перестал вставать с койки", mitigated_by: morale}
+  - {text: "Посттравматическое расстройство", tags: {morale: -1}, risk: 1, risk_text: "нервный срыв", mitigated_by: morale}
+  - {text: "Паническое расстройство", tags: {morale: -1}, risk: 1, risk_text: "паническая атака в шлюзе", mitigated_by: morale}
+  - {text: "Хроническая бессонница", tags: {morale: -1}, risk: 0}
+  - {text: "Нарколепсия (засыпает на полуслове)", tags: {}, risk: 1, risk_text: "уснул на дежурстве", mitigated_by: security}
+  - {text: "Лунатизм", tags: {}, risk: 1, risk_text: "во сне открыл гермодверь", mitigated_by: security}
+  - {text: "Храпит так, что слышно через стены", tags: {morale: -1}, risk: 0}
+  - {text: "Хроническая боль в спине", tags: {}, risk: 0}
+  - {text: "Всего одна почка", tags: {}, risk: 1, risk_text: "отказала единственная почка", mitigated_by: medicine}
+  - {text: "Язва желудка", tags: {}, risk: 1, risk_text: "прободение язвы", mitigated_by: medicine}
+  - {text: "Туберкулёз (открытая, заразная форма)", tags: {infection: -2}, risk: 3, risk_text: "туберкулёз без лечения", mitigated_by: medicine}
+  - {text: "Гепатит С (лечится)", tags: {}, risk: 1, risk_text: "цирроз", mitigated_by: medicine}
+  - {text: "ВИЧ (на терапии, вирусная нагрузка не определяется)", tags: {}, risk: 2, risk_text: "кончилась терапия", mitigated_by: medicine}
+  - {text: "Анемия", tags: {}, risk: 1, risk_text: "обмороки и слабость", mitigated_by: food}
+  - {text: "Лучевая болезнь (лёгкая форма)", tags: {}, risk: 2, risk_text: "лучевая болезнь", mitigated_by: medicine}
+  - {text: "Алкогольная зависимость", tags: {morale: -1}, risk: 1, risk_text: "ломка и драка", mitigated_by: morale}
+  - {text: "Никотиновая зависимость (две пачки в день)", tags: {morale: -1}, risk: 0}
+  - {text: "Игровая зависимость", tags: {}, risk: 0}
+  - {text: "Ипохондрия (твёрдая уверенность, что дни сочтены)", tags: {morale: -1}, risk: 0}
+  - {text: "Перелом ноги (в гипсе ещё 6 недель)", tags: {}, risk: 0}
+  - {text: "Заикание", tags: {}, risk: 0}
+  - {text: "Амнезия (не помнит ничего до прошлого года)", tags: {}, risk: 0}
+  - {text: "Иммунитет к большинству обычных вирусов (редкая мутация)", tags: {infection: 2, medicine: 1}, risk: 0}
+  - {text: "Носитель неизвестного вируса (симптомов нет)", tags: {infection: -2}, risk: 1, risk_text: "вирус проснулся", mitigated_by: medicine}
+  - {text: "Неизлечимая болезнь (врачи дают 8 месяцев)", tags: {}, risk: 4, risk_text: "болезнь, о которой все знали"}
+  - {text: "Кардиостимулятор (батарейки хватит ещё на год)", tags: {}, risk: 2, risk_text: "села батарея кардиостимулятора", mitigated_by: tech}
+  - {text: "Подагра", tags: {}, risk: 0}
+  - {text: "Зубной абсцесс (зуб ноет не переставая)", tags: {morale: -1}, risk: 1, risk_text: "заражение крови от зуба", mitigated_by: medicine}
+  - {text: "Беременность (4 месяца)", tags: {reproduction: 2}, risk: 2, risk_text: "осложнённые роды", mitigated_by: medicine}
+
+hobbies:
+  - {text: "Рыбалка", tags: {food: 1}, outside: 1}
+  - {text: "Охота", tags: {food: 1, security: 1}, outside: 1}
+  - {text: "Садоводство", tags: {food: 1}}
+  - {text: "Пчеловодство", tags: {food: 1}}
+  - {text: "Сбор грибов", tags: {food: 1}, outside: 1}
+  - {text: "Шахматы", tags: {morale: 1}}
+  - {text: "Покер", tags: {morale: 1}}
+  - {text: "Вязание", tags: {morale: 1, heat: 1}}
+  - {text: "Шитьё", tags: {tech: 1}}
+  - {text: "Гитара", tags: {morale: 2}}
+  - {text: "Фортепиано", tags: {morale: 1}}
+  - {text: "Караоке", tags: {morale: 1}}
+  - {text: "Йога", tags: {morale: 1}}
+  - {text: "Бокс", tags: {security: 1}}
+  - {text: "Скалолазание", tags: {security: 1}, outside: 1}
+  - {text: "Пешие походы", tags: {}, outside: 2}
+  - {text: "Походы с палаткой", tags: {}, outside: 2}
+  - {text: "Паркур", tags: {}, outside: 1}
+  - {text: "Стрельба из лука", tags: {security: 1, food: 1}, outside: 1}
+  - {text: "Фехтование", tags: {security: 1}}
+  - {text: "Плавание", tags: {water: 1}, outside: 1}
+  - {text: "Дайвинг", tags: {water: 1}}
+  - {text: "Резьба по дереву", tags: {tech: 1}}
+  - {text: "Гончарное дело", tags: {tech: 1}}
+  - {text: "Живопись маслом", tags: {morale: 1}}
+  - {text: "Сочинение стихов", tags: {morale: 1}}
+  - {text: "Чтение фантастики", tags: {morale: 1}}
+  - {text: "Косплей", tags: {morale: 1}}
+  - {text: "Видеоигры", tags: {}}
+  - {text: "Настольные ролевые игры", tags: {morale: 2}}
+  - {text: "Наблюдение за звёздами", tags: {morale: 1}}
+  - {text: "Домашнее пивоварение", tags: {morale: 1, water: 1}}
+  - {text: "Выпечка хлеба", tags: {food: 1, morale: 1}}
+  - {text: "Соленья и закатки", tags: {food: 2}}
+  - {text: "Сбор дикорастущих трав и кореньев", tags: {food: 1, medicine: 1}, outside: 1}
+  - {text: "Любительская радиосвязь", tags: {tech: 1, morale: 1}}
+  - {text: "Пайка электроники", tags: {tech: 1, hacking: 1}}
+  - {text: "3D-печать", tags: {tech: 1}}
+  - {text: "Гонки дронов", tags: {hacking: 1}}
+  - {text: "Таксидермия", tags: {medicine: 0}}
+  - {text: "Карточные фокусы", tags: {morale: 1}}
+  - {text: "Жонглирование", tags: {morale: 1}}
+  - {text: "Бальные танцы", tags: {morale: 1}}
+  - {text: "Изучение теорий заговора", tags: {morale: -1}}
+  - {text: "Подготовка к апокалипсису (препперство)", tags: {food: 1, security: 1, radiation: 1}, outside: 2}
+  - {text: "Спортивное ориентирование", tags: {}, outside: 2}
+  - {text: "Ремонт мотоциклов", tags: {tech: 1}}
+  - {text: "Верховая езда", tags: {}, outside: 1}
+  - {text: "Аквариумные рыбки", tags: {}}
+  - {text: "Кроссворды", tags: {}}
+  - {text: "Медитация", tags: {morale: 1}}
+  - {text: "Гадание на картах таро", tags: {morale: 1}}
+  - {text: "Спортивное вскрытие замков", tags: {security: 1}}
+  - {text: "Метание ножей", tags: {security: 1}}
+  - {text: "Кузнечное дело", tags: {tech: 1}}
+  - {text: "Мыловарение", tags: {medicine: 1, infection: 1}}
+  - {text: "Кулинарные шоу (смотрит, но никогда не готовит)", tags: {}}
+  - {text: "Коллекционирование пробок от бутылок", tags: {}}
+  - {text: "Стендап по выходным", tags: {morale: 1}}
+  - {text: "Шахматы вслепую", tags: {morale: 1}}
+
+baggage:
+  - {text: "Пистолет ТТ и 24 патрона", tags: {security: 2}, outside: 1}
+  - {text: "Охотничье ружьё и 40 патронов", tags: {security: 2, food: 1}, outside: 1}
+  - {text: "Арбалет и 12 болтов", tags: {security: 1, food: 1}, outside: 1}
+  - {text: "Мешок семян овощей (5 кг)", tags: {food: 2}}
+  - {text: "Мешок семенной картошки (20 кг)", tags: {food: 2}}
+  - {text: "Аптечка", tags: {medicine: 1}, outside: 1}
+  - {text: "Набор хирургических инструментов", tags: {medicine: 1}}
+  - {text: "Антибиотики (6 курсов)", tags: {medicine: 2, infection: 1}}
+  - {text: "Инсулин (200 доз)", tags: {medicine: 1}}
+  - {text: "Таблетки йода от радиации (300 штук)", tags: {radiation: 2}}
+  - {text: "Годовой запас витаминов", tags: {food: 1, medicine: 1}}
+  - {text: "Коробка презервативов (144 штуки)", tags: {reproduction: -1, morale: 1}}
+  - {text: "Консервы (60 банок)", tags: {food: 2}, outside: 1}
+  - {text: "Радиоприёмник с ручной динамо-машиной", tags: {morale: 1}, outside: 1}
+  - {text: "Топор", tags: {tech: 1, security: 1}, outside: 1}
+  - {text: "Походный фильтр для воды", tags: {water: 2}, outside: 2}
+  - {text: "Бензопила (без бензина)", tags: {}}
+  - {text: "Складная солнечная панель (100 Вт)", tags: {tech: 1}, outside: 1}
+  - {text: "Палатка на 4 человека", tags: {}, outside: 2}
+  - {text: "Удочка и коробка со снастями", tags: {food: 1}, outside: 1}
+  - {text: "Ноутбук с офлайн-копией Википедии", tags: {tech: 1, medicine: 1, food: 1}}
+  - {text: "Энциклопедия лекарственных растений", tags: {medicine: 1}}
+  - {text: "Священная книга", tags: {morale: 1}}
+  - {text: "Шахматы", tags: {morale: 1}}
+  - {text: "Колода игральных карт", tags: {morale: 1}}
+  - {text: "Водка (20 литров)", tags: {morale: 1, medicine: 1}}
+  - {text: "Кот в переноске", tags: {morale: 1, food: -1}}
+  - {text: "Немецкая овчарка", tags: {security: 1, food: -1}, outside: 1}
+  - {text: "Курица и петух в ящике", tags: {food: 1}}
+  - {text: "Беременная коза", tags: {food: 2}}
+  - {text: "Улей (с пчёлами)", tags: {food: 1}}
+  - {text: "Противогаз и 6 фильтров про запас", tags: {air: 2}, outside: 1}
+  - {text: "Костюм химзащиты", tags: {air: 1, infection: 1, radiation: 1}, outside: 1}
+  - {text: "Счётчик Гейгера", tags: {radiation: 2}}
+  - {text: "Очки ночного видения", tags: {security: 1}, outside: 1}
+  - {text: "Компас и бумажные карты", tags: {}, outside: 2}
+  - {text: "Спутниковый телефон (заряд 40%)", tags: {morale: 1}}
+  - {text: "Золотые слитки (5 кг)", tags: {}}
+  - {text: "Чемодан с миллионом долларов наличными", tags: {}}
+  - {text: "Флешка, на которой 12 биткоинов", tags: {}}
+  - {text: "Коллекция виниловых пластинок", tags: {morale: 1}}
+  - {text: "Свадебное платье", tags: {morale: 1}}
+  - {text: "Туалетная бумага (48 рулонов)", tags: {morale: 1}}
+  - {text: "Зажигалка и 10 баллончиков газа", tags: {heat: 1}, outside: 1}
+  - {text: "Швейцарский армейский нож", tags: {tech: 1}, outside: 1}
+  - {text: "Ящик с инструментами", tags: {tech: 2}}
+  - {text: "Переносной сварочный аппарат", tags: {tech: 2}}
+  - {text: "Дизельный генератор и 200 литров топлива", tags: {tech: 2, heat: 2}}
+  - {text: "Велосипед", tags: {}, outside: 1}
+  - {text: "Швейный набор", tags: {tech: 1}}
+  - {text: "Книга «Роды на дому для начинающих»", tags: {reproduction: 1, medicine: 1}}
+  - {text: "Гитара", tags: {morale: 2}}
+  - {text: "Аккордеон", tags: {morale: 1}}
+  - {text: "Краски и холсты", tags: {morale: 1}}
+  - {text: "Резиновая уточка", tags: {}}
+  - {text: "Банка закваски для хлеба", tags: {food: 1}}
+  - {text: "Соль (10 кг)", tags: {food: 1}}
+  - {text: "Кофе в зёрнах (5 кг)", tags: {morale: 2}}
+  - {text: "Сигареты (40 пачек)", tags: {morale: 1}}
+  - {text: "Банка мёда (3 кг)", tags: {food: 1, medicine: 1}}
+  - {text: "Микроскоп", tags: {medicine: 1, infection: 1}}
+  - {text: "Набор «Юный химик»", tags: {}}
+  - {text: "Ракетница и 6 ракет", tags: {security: 1}, outside: 1}
+  - {text: "Наручники без ключа", tags: {security: 1}}
+  - {text: "Дневник прежнего владельца бункера", tags: {tech: 1}}
+  - {text: "Урна с прахом бабушки", tags: {}}
+  - {text: "Тату-машинка", tags: {morale: 1}}
+  - {text: "Машинка для стрижки волос", tags: {morale: 1}}
+  - {text: "Запертый ящик, который ни в коем случае нельзя открывать", tags: {}}
+  - {text: "Рис (30 кг)", tags: {food: 2}}
+  - {text: "Динамит (8 шашек)", tags: {security: 1, tech: 1}}
+  - {text: "Дрон с камерой", tags: {security: 1}}
+  - {text: "Пара раций", tags: {security: 1}, outside: 1}
+  - {text: "Верёвка (50 метров)", tags: {tech: 1}, outside: 1}
+  - {text: "Бочка воды (200 литров)", tags: {water: 1}}
+  - {text: "Фитолампа", tags: {food: 1}}
+  - {text: "Автомобильный аккумулятор", tags: {tech: 1}}
+  - {text: "Мегафон", tags: {}}
+  - {text: "Плюшевый мишка", tags: {morale: 1}}
+  - {text: "Самурайский меч (декоративный)", tags: {security: 0}}
+  - {text: "Спальный мешок", tags: {heat: 1}, outside: 1}
+
+facts:
+  - {text: "Говорит на 5 языках", tags: {morale: 1}}
+  - {text: "Умеет оказывать первую помощь", tags: {medicine: 1}, outside: 1}
+  - {text: "Однажды пришлось принимать роды (в такси)", tags: {reproduction: 1}}
+  - {text: "Отсидел 6 лет за мошенничество", tags: {morale: -1}}
+  - {text: "Отсидел 4 года за грабёж", tags: {security: 1, morale: -1}}
+  - {text: "Вскрывает любой замок меньше чем за минуту", tags: {security: 1}}
+  - {text: "Чёрный пояс по дзюдо", tags: {security: 1}}
+  - {text: "Починит любой двигатель", tags: {tech: 2}}
+  - {text: "Знает, какие дикие растения съедобны", tags: {food: 1}, outside: 2}
+  - {text: "Разводит костёр без спичек", tags: {heat: 1}, outside: 1}
+  - {text: "Фотографическая память", tags: {}}
+  - {text: "Олимпийское прошлое: биатлон", tags: {security: 1}, outside: 1}
+  - {text: "Соберёт ветряк из металлолома", tags: {tech: 2}}
+  - {text: "Умеет зашивать раны", tags: {medicine: 1}}
+  - {text: "Играет по слуху на любом инструменте", tags: {morale: 1}}
+  - {text: "Знает азбуку Морзе", tags: {}}
+  - {text: "Водит всё, что на колёсах или гусеницах", tags: {}, outside: 1}
+  - {text: "Гонит самогон почти из чего угодно", tags: {morale: 1, medicine: 1}}
+  - {text: "Приготовит приличный обед из трёх продуктов", tags: {food: 1}}
+  - {text: "За плечами — авиакатастрофа", tags: {}, outside: 1}
+  - {text: "Умеет очищать воду", tags: {water: 2}, outside: 1}
+  - {text: "Варит мыло и делает свечи", tags: {infection: 1}}
+  - {text: "Лично знает инженера, строившего этот бункер", tags: {tech: 1}}
+  - {text: "Знает, где найти заброшенный армейский склад", tags: {security: 1, food: 1}, outside: 1}
+  - {text: "Видит, когда врут (обычно)", tags: {}}
+  - {text: "Может не есть 4 дня подряд", tags: {food: 1}, outside: 1}
+  - {text: "Мухлюет в картах и никогда не попадается", tags: {morale: -1}}
+  - {text: "Ещё неделю назад — миллионы на счету", tags: {}}
+  - {text: "В соцсетях 3 миллиона подписчиков", tags: {}}
+  - {text: "Знает наизусть 400 анекдотов", tags: {morale: 1}}
+  - {text: "Умеет стричь", tags: {morale: 1}}
+  - {text: "Ориентируется по звёздам", tags: {}, outside: 1}
+  - {text: "Сектантское прошлое", tags: {morale: -1}}
+  - {text: "Тайник с припасами в 12 км отсюда", tags: {food: 1}, outside: 2}
+  - {text: "Разводит кур и кроликов", tags: {food: 2}}
+  - {text: "За плечами — дом, построенный своими руками", tags: {tech: 2}}
+  - {text: "Шпионское прошлое (если верить на слово)", tags: {}}
+  - {text: "Успокоит любое животное", tags: {}}
+  - {text: "Блестяще ведёт переговоры", tags: {morale: 1}}
+  - {text: "Дрессирует собак", tags: {security: 1}}
+  - {text: "Опыт выживания: 6 недель в лесу в одиночку", tags: {food: 1}, outside: 3}
+  - {text: "Волонтёр-спасатель (стаж 8 лет)", tags: {medicine: 1, security: 1}, outside: 1}
+  - {text: "Перепрограммирует любой микроконтроллер", tags: {hacking: 2, tech: 1}}
+  - {text: "Владеет сердечно-лёгочной реанимацией", tags: {medicine: 1}}
+  - {text: "Умеет вправлять кости", tags: {medicine: 1}}
+  - {text: "Выращивает пенициллиновую плесень (и надеется, что сработает)", tags: {medicine: 1, infection: 1}}
+  - {text: "Высыпается за 4 часа", tags: {}}
+  - {text: "Опыт переговоров об освобождении заложников", tags: {morale: 1, security: 1}}
+  - {text: "Соберёт радиоприёмник из хлама", tags: {tech: 1}}
+  - {text: "Разделывает и заготавливает мясо", tags: {food: 1}}
+  - {text: "Выделывает кожу и шьёт одежду", tags: {heat: 1}}
+  - {text: "Знает экстренную хирургию по книгам (практики — ноль)", tags: {medicine: 0}}
+  - {text: "Лицензия пилота малой авиации", tags: {}, outside: 1}
+  - {text: "Умеет сваривать и ковать металл", tags: {tech: 2}}
+  - {text: "Знает, как сделать порох", tags: {security: 1}}
+  - {text: "Рассмешит кого угодно в любой ситуации", tags: {morale: 2}}
+  - {text: "Умеет вести собрание и подсчитывать голоса", tags: {morale: 1}}
+  - {text: "Разбирается в лечебных травах", tags: {medicine: 1}}
+  - {text: "Разбирается в пчеловодстве", tags: {food: 1}}
+  - {text: "Задерживает дыхание на 4 минуты", tags: {}}
+  - {text: "Клептоман", tags: {morale: -2}}
+  - {text: "Врёт и преувеличивает", tags: {morale: -1}}
+  - {text: "Душа компании", tags: {morale: 2}}
+  - {text: "Зануда", tags: {morale: -1}}
+  - {text: "Вернулся из горячей точки", tags: {security: 2, morale: -1}, outside: 1}
+  - {text: "Взломал базу данных ЦРУ", tags: {hacking: 3}}
+  - {text: "Видел инопланетян", tags: {}}
+  - {text: "Держал дома 40 кошек", tags: {}}
+  - {text: "Нобелевский лауреат по биоинженерии", tags: {medicine: 2, infection: 2}}
+  - {text: "Нытик", tags: {morale: -2}}
+  - {text: "Остался в живых на необитаемом острове", tags: {food: 1, water: 1}, outside: 3}
+  - {text: "Прошёл двухнедельные курсы психолога", tags: {morale: 1}}
+  - {text: "Психопат", tags: {morale: -2, security: 1}}
+  - {text: "Разговаривает с духами", tags: {}}
+  - {text: "Сплетник", tags: {morale: -1}}
+  - {text: "Строил подобные бункеры", tags: {tech: 3}}
+  - {text: "Только что из очага эпидемии", tags: {infection: -2}}
+  - {text: "Храпит", tags: {morale: -1}}
+  - {text: "Прирождённый лидер", tags: {morale: 1}}
+  - {text: "Трусость", tags: {security: -1}}
+  - {text: "Хладнокровие в любой передряге", tags: {security: 1, morale: 1}}
+  - {text: "Вспыльчивость", tags: {morale: -1}}
+  - {text: "Религиозный фанатизм", tags: {morale: -1}}
+  - {text: "Бесконечное терпение", tags: {morale: 1}}
+  - {text: "Манипулирует людьми", tags: {morale: -1}}
+  - {text: "Обжора", tags: {food: -1}}
+
+phobias:
+  - {text: "Клаустрофобия: боязнь замкнутых пространств", tags: {morale: -2}, risk: 2, risk_text: "сорвался и открыл гермодверь", mitigated_by: morale}
+  - {text: "Никтофобия: боязнь темноты", tags: {morale: -1}, risk: 1, risk_text: "паника при отключении света", mitigated_by: tech}
+  - {text: "Арахнофобия: боязнь пауков", tags: {}, risk: 0}
+  - {text: "Гемофобия: боязнь крови", tags: {medicine: -1}, risk: 0}
+  - {text: "Акрофобия: боязнь высоты", tags: {}, risk: 0}
+  - {text: "Агорафобия: боязнь открытых пространств и толпы", tags: {}, risk: 0, outside: -1}
+  - {text: "Аквафобия: боязнь воды", tags: {water: -1}, risk: 0}
+  - {text: "Кинофобия: боязнь собак", tags: {}, risk: 0}
+  - {text: "Мусофобия: боязнь мышей и крыс", tags: {}, risk: 0}
+  - {text: "Энтомофобия: боязнь насекомых", tags: {}, risk: 0}
+  - {text: "Мизофобия: боязнь микробов и грязи", tags: {infection: 1, morale: -1}, risk: 0}
+  - {text: "Трипанофобия: боязнь игл и уколов", tags: {}, risk: 1, risk_text: "отказался от укола", mitigated_by: morale}
+  - {text: "Ятрофобия: боязнь врачей", tags: {}, risk: 1, risk_text: "скрывал болезнь до последнего", mitigated_by: morale}
+  - {text: "Танатофобия: боязнь смерти", tags: {morale: -1}, risk: 0}
+  - {text: "Аутофобия: боязнь одиночества", tags: {}, risk: 0}
+  - {text: "Социофобия: боязнь чужого осуждения", tags: {morale: -1}, risk: 0}
+  - {text: "Глоссофобия: боязнь публичных выступлений", tags: {}, risk: 0}
+  - {text: "Пирофобия: боязнь огня", tags: {heat: -1}, risk: 0}
+  - {text: "Коулрофобия: боязнь клоунов", tags: {}, risk: 0}
+  - {text: "Номофобия: боязнь остаться без телефона", tags: {morale: -1}, risk: 0}
+  - {text: "Сомнифобия: боязнь заснуть", tags: {morale: -1}, risk: 1, risk_text: "нервное истощение без сна", mitigated_by: medicine}
+  - {text: "Фазмофобия: боязнь призраков", tags: {}, risk: 0}
+  - {text: "Технофобия: боязнь техники", tags: {tech: -1}, risk: 0}
+  - {text: "Радиофобия: боязнь радиации", tags: {morale: -1}, risk: 0}
+  - {text: "Микофобия: боязнь грибов", tags: {food: -1}, risk: 0}
+  - {text: "Антропофобия: боязнь людей", tags: {morale: -1}, risk: 0}
+  - {text: "Токофобия: боязнь беременности и родов", tags: {reproduction: -1}, risk: 0}
+  - {text: "Цибофобия: боязнь еды", tags: {}, risk: 1, risk_text: "истощение", mitigated_by: morale}
+  - {text: "Гелиофобия: боязнь солнечного света", tags: {}, risk: 0, outside: -1}
+  - {text: "Батофобия: боязнь глубины", tags: {morale: -1}, risk: 0}
+  - {text: "Децидофобия: боязнь принимать решения", tags: {}, risk: 0}
+  - {text: "Механофобия: боязнь машин и механизмов", tags: {tech: -1}, risk: 0}
+  - {text: "Тафофобия: боязнь погребения заживо", tags: {morale: -2}, risk: 1, risk_text: "паническая атака в шлюзе", mitigated_by: morale}
+  - {text: "Фобий нет", tags: {}, risk: 0}
+  - {text: "Фобий нет (но боится щекотки)", tags: {}, risk: 0}

@@ -1,0 +1,35 @@
+# Особые условия. effect: swap | reroll | reveal | immunity | extra_seat | double_vote
+- {id: swap_profession, title: "Смена профессии", effect: swap, category: profession,
+   text: "Выбери другого игрока: вы меняетесь картами профессии. Обе карты открываются всем."}
+- {id: swap_health, title: "Донор органов", effect: swap, category: health,
+   text: "Выбери другого игрока: вы меняетесь картами здоровья. Обе карты открываются всем."}
+- {id: swap_baggage, title: "Бартер", effect: swap, category: baggage,
+   text: "Выбери другого игрока: вы меняетесь картами багажа. Обе карты открываются всем."}
+- {id: swap_hobby, title: "Обмен увлечениями", effect: swap, category: hobby,
+   text: "Выбери другого игрока: вы меняетесь картами хобби. Обе карты открываются всем."}
+- {id: swap_phobia, title: "Передай страх", effect: swap, category: phobia,
+   text: "Выбери другого игрока: вы меняетесь картами фобии. Обе карты открываются всем."}
+- {id: reroll_health, title: "Чудесное исцеление", effect: reroll, category: health,
+   text: "Твоя карта здоровья сбрасывается, вместо неё вытягивается новая и сразу открывается всем."}
+- {id: reroll_profession, title: "Вечерние курсы", effect: reroll, category: profession,
+   text: "Твоя карта профессии сбрасывается, вместо неё вытягивается новая и сразу открывается всем."}
+- {id: reroll_baggage, title: "Бюро находок", effect: reroll, category: baggage,
+   text: "Твоя карта багажа сбрасывается, вместо неё вытягивается новая и сразу открывается всем."}
+- {id: reroll_phobia, title: "Клин клином", effect: reroll, category: phobia,
+   text: "Твоя карта фобии сбрасывается, вместо неё вытягивается новая и сразу открывается всем."}
+- {id: reveal_interrogation, title: "Допрос", effect: reveal,
+   text: "Выбери другого игрока: одна его скрытая карта, выбранная наугад, открывается всем."}
+- {id: reveal_paparazzi, title: "Папарацци", effect: reveal,
+   text: "Выбери другого игрока: одна его скрытая карта открывается всем. Улыбочку!"}
+- {id: reveal_truth, title: "Сыворотка правды", effect: reveal,
+   text: "Выбери другого игрока: одна его скрытая карта, выбранная наугад, открывается всем."}
+- {id: immunity_diplomat, title: "Дипломатическая неприкосновенность", effect: immunity,
+   text: "Сыграй до голосования: в ближайшем голосовании тебя нельзя изгнать."}
+- {id: immunity_untouchable, title: "Неприкасаемый", effect: immunity,
+   text: "Сыграй до голосования: в ближайшем голосовании тебя нельзя изгнать."}
+- {id: extra_seat, title: "Потайная комната", effect: extra_seat,
+   text: "Ты нашёл в чертежах ещё один отсек. В бункере становится на одно место больше."}
+- {id: double_vote, title: "Громкий голос", effect: double_vote,
+   text: "Сыграй до голосования: в ближайшем голосовании твой голос считается за два."}
+- {id: double_vote2, title: "Компромат", effect: double_vote,
+   text: "Сыграй до голосования: ты знаешь кое-что про всех, и в ближайшем голосовании твой голос считается за два."}
