@@ -35,11 +35,15 @@ def test_reveal_limits():
     room.start(ps[0])
     p = ps[1]
     hidden = [c for c in p.cards if not p.cards[c]["revealed"]]
+    assert p.reveals_left == 2  # первый раунд: профессия + две карты по выбору
     room.reveal(p, hidden[0])
+    room.reveal(p, hidden[1])
     with pytest.raises(GameError):
-        room.reveal(p, hidden[1])
+        room.reveal(p, hidden[2])
     with pytest.raises(GameError):
         room.reveal(p, hidden[0])
+    room._begin_round(2)
+    assert p.reveals_left == 1
 
 
 def _vote_all(room, target):

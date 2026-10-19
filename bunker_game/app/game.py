@@ -170,9 +170,12 @@ class Room:
         self.round = number
         self.phase = "reveal"
         self.vote = None
+        # В первом раунде кроме профессии открывают на одну карту больше.
+        per_round = self.settings["reveals_per_round"] + (1 if number == 1 else 0)
         for p in self.alive():
-            p.reveals_left = self.settings["reveals_per_round"]
-        self._log(f"Раунд {number}: откройте по {self.settings['reveals_per_round']} карте и обсудите", "system")
+            p.reveals_left = per_round
+        word = "карте" if per_round == 1 else "карты"
+        self._log(f"Раунд {number}: откройте по {per_round} {word} и обсудите", "system")
         self.touch()
 
     # ---- раскрытие и спецкарты ------------------------------------------

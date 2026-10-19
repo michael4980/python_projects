@@ -76,7 +76,7 @@
       <label class="row">Мест в бункере
         <input type="number" min="1" :max="Math.max(1, state.players.length-1)" v-model.number="settings.seats" @change="applySettings">
       </label>
-      <label class="row">Карт открывать за раунд
+      <label class="row">Карт открывать за раунд (в первом на одну больше)
         <input type="number" min="1" max="3" v-model.number="settings.reveals_per_round" @change="applySettings">
       </label>
       <label class="row"><span>Особые условия</span>
