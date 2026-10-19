@@ -50,8 +50,9 @@ pytest -q            # тесты движка и правил
 Приложение — один контейнер (FastAPI + WebSocket, состояние в памяти). Варианты:
 
 - **Render.com** (бесплатно, сервис засыпает без трафика): New → Blueprint → этот репозиторий,
-  используется `bunker_game/render.yaml`. В настройках сервиса задайте `MASTER_CODE` и
-  `OPENAI_API_KEY`.
+  используется `render.yaml` из корня репозитория. При создании Render попросит значения
+  `MASTER_CODE` и `OPENAI_API_KEY` и сохранит их у себя: в публичный репозиторий ключи не
+  попадают. Поменять их потом можно во вкладке Environment сервиса.
 - **Свой VPS**: `cp .env.example .env`, заполнить, `docker compose up -d --build`, перед
   контейнером поставить Caddy/nginx с HTTPS (WebSocket проксируется как обычный HTTP upgrade).
 

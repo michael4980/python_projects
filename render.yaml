@@ -1,0 +1,19 @@
+# Blueprint для Render.com. Лежит в корне репозитория, как требует Render.
+# Dashboard → New → Blueprint → этот репозиторий → выбрать ветку → Apply.
+# Секреты (sync: false) Render спросит при создании и хранит у себя, в репозиторий они не попадают.
+services:
+  - type: web
+    name: bunker
+    runtime: docker
+    rootDir: bunker_game
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/config
+    envVars:
+      - key: MASTER_CODE
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
