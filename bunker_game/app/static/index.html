@@ -118,7 +118,8 @@
         <span v-else> Вы снаружи и наблюдаете.</span>
       </template>
       <template v-else-if="state.phase==='vote'">
-        <b>Голосование{{ state.vote.tiebreak ? ' (переголосование после ничьей)' : '' }}.</b>
+        <b v-if="state.vote.stage==='jury'">Ничья. Суд изгнанных: решают те, кто снаружи.</b>
+        <b v-else>Голосование{{ state.vote.tiebreak ? ' (переголосование после ничьей)' : '' }}.</b>
         Проголосовали {{ state.vote.voted.length }} из {{ state.vote.needed }}.
       </template>
       <div class="host-controls" v-if="me.is_host">
@@ -128,8 +129,8 @@
       </div>
     </section>
 
-    <section class="card vote" v-if="state.phase==='vote' && me.status==='alive'">
-      <h3>Кого оставить снаружи?</h3>
+    <section class="card vote" v-if="state.phase==='vote' && state.vote.voters.includes(me.id)">
+      <h3>{{ state.vote.stage==='jury' ? 'Вы снаружи и решаете, кто останется с вами' : 'Кого оставить снаружи?' }}</h3>
       <div class="vote-grid">
         <button v-for="p in candidates" :key="p.id" class="vote-btn"
                 :class="{chosen: me.my_vote===p.id}" :disabled="p.id===me.id || !!me.my_vote"

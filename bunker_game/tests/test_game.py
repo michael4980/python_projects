@@ -136,3 +136,43 @@ def test_private_state_hides_nothing_from_owner_and_public_hides_hidden():
     mine_pub = next(p for p in pub["players"] if p["id"] == ps[0].id)
     assert list(mine_pub["revealed"]) == ["profession"]
     assert mine_pub["hidden_count"] == 6
+
+
+def test_final_two_tie_resolved_by_exiled_jury():
+    room, ps = make_room(3)  # seats = 1
+    room.start(ps[0])
+    room.start_vote(ps[0])
+    a, b, c = room.alive()
+    room.cast_vote(a, c.id)
+    room.cast_vote(b, c.id)
+    room.cast_vote(c, a.id)
+    assert c.status == "out" and room.phase == "reveal"
+    # двое оставшихся голосуют друг за друга
+    room.start_vote(ps[0])
+    room.cast_vote(a, b.id)
+    room.cast_vote(b, a.id)
+    assert room.phase == "vote" and room.vote["stage"] == "jury"
+    assert room.vote["voters"] == [c.id]
+    with pytest.raises(GameError):
+        room.cast_vote(a, b.id)  # живые в суде не голосуют
+    room.cast_vote(c, a.id)
+    assert a.status == "out" and b.status == "alive"
+    assert room.phase == "finished"
+    assert room.ending["verdict"]["total"] == 1
+
+
+def test_three_way_tie_goes_straight_to_jury():
+    room, ps = make_room(4)  # seats = 2
+    room.start(ps[0])
+    room.start_vote(ps[0])
+    a, b, c, d = room.alive()
+    for voter in (a, b, c):
+        room.cast_vote(voter, d.id)
+    room.cast_vote(d, a.id)
+    room.start_vote(ps[0])
+    # трое голосуют по кругу: все лидеры, переголосовывать некому -> сразу суд изгнанного d
+    room.cast_vote(a, b.id); room.cast_vote(b, c.id); room.cast_vote(c, a.id)
+    assert room.vote["stage"] == "jury" and room.vote["voters"] == [d.id]
+    assert set(room.vote["candidates"]) == {a.id, b.id, c.id}
+    room.cast_vote(d, a.id)
+    assert a.status == "out" and room.phase == "finished"

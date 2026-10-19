@@ -252,7 +252,8 @@ class Room:
         candidates = [p.id for p in self.alive() if not p.immunity]
         if len(candidates) < 2:
             raise GameError("Слишком мало кандидатов для голосования")
-        self.vote = {"candidates": candidates, "votes": {}, "tiebreak": False, "tally": None}
+        self.vote = {"candidates": candidates, "voters": [p.id for p in self.alive()],
+                     "votes": {}, "stage": "main", "tiebreak": False, "tally": None}
         self.phase = "vote"
         self._log("Голосование началось", "system")
         self.touch()
@@ -268,15 +269,15 @@ class Room:
     def cast_vote(self, actor: Player, target_id: str) -> None:
         if self.phase != "vote" or not self.vote:
             raise GameError("Голосование не идёт")
-        if actor.status != "alive":
-            raise GameError("Голосуют только те, кто в игре")
+        if actor.id not in self.vote["voters"]:
+            raise GameError("Сейчас голосуют другие")
         if target_id not in self.vote["candidates"]:
             raise GameError("За этого игрока голосовать нельзя")
         if target_id == actor.id:
             raise GameError("За себя голосовать нельзя")
         self.vote["votes"][actor.id] = target_id
         self.touch()
-        if len(self.vote["votes"]) >= len(self.alive()):
+        if len(self.vote["votes"]) >= len(self.vote["voters"]):
             self._finish_vote()
 
     def _finish_vote(self) -> None:
@@ -289,14 +290,28 @@ class Room:
         leaders = [pid for pid, v in tally.items() if v == top]
         self.vote["tally"] = tally
         names = ", ".join(f"{self.player(pid).name}: {v}" for pid, v in sorted(tally.items(), key=lambda x: -x[1]))
-        if len(leaders) > 1 and not self.vote["tiebreak"]:
-            self._log(f"Ничья ({names}). Оправдательная речь и переголосование", "system")
-            self.last_vote = dict(self.vote)
-            self.vote = {"candidates": leaders, "votes": {}, "tiebreak": True, "tally": None}
-            return
+        stage = self.vote["stage"]
+        if len(leaders) > 1:
+            alive_ids = [p.id for p in self.alive()]
+            jury = [p.id for p in self.exiled()]
+            # Переголосование имеет смысл, только если кроме лидеров есть кому голосовать.
+            if stage == "main" and len(alive_ids) > len(leaders):
+                self._log(f"Ничья ({names}). Оправдательная речь и переголосование", "system")
+                self.last_vote = dict(self.vote)
+                self.vote = {"candidates": leaders, "voters": alive_ids, "votes": {},
+                             "stage": "revote", "tiebreak": True, "tally": None}
+                return
+            if stage != "jury" and jury:
+                self._log(f"Ничья ({names}). Решает суд изгнанных: голосуют те, кто снаружи", "system")
+                self.last_vote = dict(self.vote)
+                self.vote = {"candidates": leaders, "voters": jury, "votes": {},
+                             "stage": "jury", "tiebreak": True, "tally": None}
+                return
         exiled_id = leaders[0] if len(leaders) == 1 else self.rng.choice(leaders)
         if len(leaders) > 1:
             self._log(f"Снова ничья ({names}): жребий решает", "system")
+        elif stage == "jury":
+            self._log(f"Суд изгнанных ({names})", "system")
         target = self.player(exiled_id)
         target.status = "out"
         target.exiled_round = self.round
@@ -358,8 +373,9 @@ class Room:
             })
         vote = None
         if self.vote:
-            vote = {"candidates": self.vote["candidates"], "tiebreak": self.vote["tiebreak"],
-                    "voted": list(self.vote["votes"].keys()), "needed": len(self.alive())}
+            vote = {"candidates": self.vote["candidates"], "voters": self.vote["voters"],
+                    "stage": self.vote["stage"], "tiebreak": self.vote["tiebreak"],
+                    "voted": list(self.vote["votes"].keys()), "needed": len(self.vote["voters"])}
         last_vote = None
         if self.last_vote and self.last_vote.get("tally"):
             last_vote = {"tally": self.last_vote["tally"], "tiebreak": self.last_vote["tiebreak"]}
