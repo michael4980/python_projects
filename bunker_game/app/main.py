@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from . import config
 from .game import GameError, Room, new_room_code
 from .narrator import generate_narrative
+from .store import make_store
 
 log = logging.getLogger("bunker")
 STATIC_DIR = Path(__file__).parent / "static"
@@ -25,6 +26,34 @@ class RoomManager:
         self.rooms: dict[str, Room] = {}
         self.sockets: dict[str, dict[str, set[WebSocket]]] = {}  # code -> player_id -> sockets
         self.narrative_tasks: dict[str, asyncio.Task] = {}
+        self.store = None
+
+    async def restore(self) -> None:
+        """Поднимает комнаты из хранилища при старте сервера."""
+        self.store = make_store()
+        try:
+            records = await self.store.load_all()
+        except Exception as e:  # noqa: BLE001
+            log.exception("cannot load rooms: %s", e)
+            return
+        for data in records:
+            try:
+                room = Room.from_dict(data)
+            except Exception as e:  # noqa: BLE001
+                log.warning("skip broken room %s: %s", data.get("code"), e)
+                continue
+            self.rooms[room.code] = room
+            self.sockets[room.code] = {}
+            self._maybe_start_narrative(room)
+        log.info("restored %d rooms", len(records))
+
+    async def persist(self, room: Room) -> None:
+        if self.store is None:
+            return
+        try:
+            await self.store.save(room.to_dict())
+        except Exception as e:  # noqa: BLE001
+            log.warning("cannot save room %s: %s", room.code, e)
 
     def create(self) -> Room:
         code = new_room_code()
@@ -58,6 +87,7 @@ class RoomManager:
         for pid, ws in dead:
             self.sockets[room.code][pid].discard(ws)
         self._maybe_start_narrative(room)
+        await self.persist(room)
 
     def _maybe_start_narrative(self, room: Room) -> None:
         if room.phase != "finished" or room.narrative_status != "pending" or room.code in self.narrative_tasks:
@@ -82,6 +112,11 @@ class RoomManager:
                 if now - room.touched_at > ttl:
                     self.rooms.pop(code, None)
                     self.sockets.pop(code, None)
+                    if self.store is not None:
+                        try:
+                            await self.store.delete(code)
+                        except Exception as e:  # noqa: BLE001
+                            log.warning("cannot delete room %s: %s", code, e)
 
 
 manager = RoomManager()
@@ -90,7 +125,14 @@ app = FastAPI(title="Бункер")
 
 @app.on_event("startup")
 async def _startup() -> None:
+    await manager.restore()
     asyncio.create_task(manager.cleanup_loop())
+
+
+@app.on_event("shutdown")
+async def _shutdown() -> None:
+    if manager.store is not None:
+        await manager.store.close()
 
 
 class CreateRoom(BaseModel):
@@ -109,7 +151,7 @@ def api_config() -> dict:
 
 
 @app.post("/api/rooms")
-def api_create_room(body: CreateRoom) -> dict:
+async def api_create_room(body: CreateRoom) -> dict:
     if config.MASTER_CODE and not hmac.compare_digest(body.master_code.strip(), config.MASTER_CODE):
         raise HTTPException(403, "Неверный мастер-код")
     room = manager.create()
@@ -118,6 +160,7 @@ def api_create_room(body: CreateRoom) -> dict:
     except GameError as e:
         manager.rooms.pop(room.code, None)
         raise HTTPException(400, str(e))
+    await manager.persist(room)
     return {"code": room.code, "token": player.token, "player_id": player.id}
 
 

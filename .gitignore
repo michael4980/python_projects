@@ -377,3 +377,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows
+
+# Bunker game: local room storage
+bunker_game/data/

@@ -11,3 +11,6 @@ OPENAI_BASE_URL: str = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com
 ROOM_TTL_HOURS: float = float(os.environ.get("ROOM_TTL_HOURS", "8"))
 MIN_PLAYERS: int = int(os.environ.get("MIN_PLAYERS", "3"))
 MAX_PLAYERS: int = 16
+# Хранилище комнат: REDIS_URL (Render Key Value / любой Redis) или файл в DATA_DIR.
+REDIS_URL: str = os.environ.get("REDIS_URL", "").strip()
+DATA_DIR: str = os.environ.get("DATA_DIR", "data").strip()

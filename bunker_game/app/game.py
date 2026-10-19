@@ -37,6 +37,20 @@ class Player:
         self.reveals_left = 0
         self.exiled_round: int | None = None
 
+    _FIELDS = ("id", "token", "name", "is_host", "cards", "special", "status", "immunity",
+               "double_vote", "reveals_left", "exiled_round")
+
+    def to_dict(self) -> dict:
+        return {k: getattr(self, k) for k in self._FIELDS}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Player":
+        p = cls(d["name"], is_host=d.get("is_host", False))
+        for k in cls._FIELDS:
+            if k in d:
+                setattr(p, k, d[k])
+        return p
+
     def hidden_categories(self) -> list[str]:
         return [c for c in CATEGORIES if self.cards and not self.cards[c]["revealed"]]
 
@@ -66,6 +80,33 @@ class Room:
         self.touched_at = time.time()
         self.content = get_content()
         self._used: dict[str, set[str]] = {}
+
+    # ---- сохранение ------------------------------------------------------
+    _FIELDS = ("code", "seed", "phase", "round", "seats", "settings", "catastrophe", "bunker", "vote",
+               "last_vote", "log", "ending", "narrative", "narrative_status", "created_at", "touched_at")
+
+    def to_dict(self) -> dict:
+        d = {k: getattr(self, k) for k in self._FIELDS}
+        d["players"] = [p.to_dict() for p in self.players]
+        d["used"] = {k: sorted(v) for k, v in self._used.items()}
+        version, state, gauss = self.rng.getstate()
+        d["rng"] = [version, list(state), gauss]
+        return d
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Room":
+        room = cls(d["code"], seed=d["seed"])
+        for k in cls._FIELDS:
+            if k in d:
+                setattr(room, k, d[k])
+        room.players = [Player.from_dict(p) for p in d.get("players", [])]
+        for p in room.players:
+            p.connected = False
+        room._used = {k: set(v) for k, v in d.get("used", {}).items()}
+        if d.get("rng"):
+            version, state, gauss = d["rng"]
+            room.rng.setstate((version, tuple(state), gauss))
+        return room
 
     # ---- служебное -------------------------------------------------------
     def touch(self) -> None:

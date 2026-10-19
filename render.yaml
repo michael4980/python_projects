@@ -17,3 +17,15 @@ services:
         sync: false
       - key: OPENAI_MODEL
         value: gpt-4o-mini
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: bunker-kv
+          property: connectionString
+  # Хранилище комнат: переживает редеплой веб-сервиса.
+  - type: keyvalue
+    name: bunker-kv
+    plan: free
+    region: frankfurt
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
